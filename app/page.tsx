@@ -147,16 +147,17 @@ const SequenceEditor = ({
   );
 
   const [seqLength, setSeqLength] = useState(sequence.length);
+  const defferedSeqLength = useDeferredValue(seqLength);
   useEffect(
     function pruneSequenceOnLengthChange() {
       if (sequence.length > maxLength) {
         setSequence(sequence.slice(0, maxLength));
       }
-      if (seqLength > maxLength) {
+      if (defferedSeqLength > maxLength) {
         setSeqLength(maxLength);
       }
     },
-    [maxLength, seqLength, sequence],
+    [maxLength, defferedSeqLength, sequence],
   );
 
   useEffect(
@@ -173,7 +174,7 @@ const SequenceEditor = ({
         setSequence(newSequence);
       }
     },
-    [seqLength],
+    [defferedSeqLength],
   );
 
   return (
@@ -184,7 +185,7 @@ const SequenceEditor = ({
           id="sequenceLength"
           type="number"
           className="w-fit min-w-[180px]"
-          value={sequence.length}
+          value={seqLength}
           max={maxLength}
           onChange={(e) => {
             const value = parseInt(e.target.value);
