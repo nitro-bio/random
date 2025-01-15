@@ -1,4 +1,11 @@
 "use client";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +17,7 @@ import { DicesIcon, FilterIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 
 import { useForm } from "react-hook-form";
+import { useStickyState } from "@/hooks/useStickyState";
 
 export const SequenceEditor = ({
   baseMap,
@@ -22,6 +30,12 @@ export const SequenceEditor = ({
   pushSequence: (sequence: string) => void;
   className?: string;
 }) => {
+  const [outputMode, setOutputMode] = useStickyState<"text" | "fasta">({
+    defaultValue: "text",
+    prefix: "nitro-random",
+    key: "outputMode",
+    version: "0",
+  });
   const allowedChars = useMemo(
     () => Object.keys(baseMap).filter((key) => baseMap[key]),
     [baseMap],
@@ -47,6 +61,22 @@ export const SequenceEditor = ({
       pushSequence(debouncedSequence.toUpperCase());
     }
   }, [debouncedSequence, pushSequence]);
+
+  const outputModeSelector = (
+    <div className="flex-1 space-y-2">
+      <Select
+        onValueChange={(value) => setOutputMode(value as "text" | "fasta")}
+      >
+        <SelectTrigger className="" id="numSequences">
+          <SelectValue placeholder={outputMode} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="text">Text</SelectItem>
+          <SelectItem value="fasta">Fasta</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
 
   return (
     <section className={cn("flex flex-col gap-4", className)}>
@@ -112,13 +142,24 @@ export const SequenceEditor = ({
             <DicesIcon className="mr-2 h-6 w-6" />
             Randomize
           </Button>
-          <CopyButton
-            label={"Copy"}
-            textToCopy={() => {
-              return getValues("Sequence");
-            }}
-            buttonClassName="col-span-2"
-          />
+          <div className="col-start-2 flex gap-1">
+            {outputModeSelector}
+            <CopyButton
+              label={"  Copy "}
+              buttonClassName="w-fit ml-auto whitespace-pre font-mono justify-end"
+              textToCopy={() => {
+                if (outputMode === "text") {
+                  return getValues("Sequence");
+                } else if (outputMode === "fasta") {
+                  // Output current date and time in local format
+                  const dateStr = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
+                  return `>Random Sequence by http://random.nitro.bio at ${dateStr}\n${getValues("Sequence")}`;
+                } else {
+                  throw new Error(`Invalid output mode: ${outputMode}`);
+                }
+              }}
+            />
+          </div>
         </span>
       </div>
     </section>
