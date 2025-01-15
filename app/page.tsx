@@ -1,6 +1,7 @@
 "use client";
 import { BaseSelector } from "@/components/BaseSelector";
 import { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -14,8 +15,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { AMINO_ACIDS, NUCLEOTIDES, PUNCTUATION } from "@/utils/constants";
 import { AriadneSelection, SequenceViewer } from "@nitro-bio/sequence-viewers";
-import { CopyIcon, DicesIcon } from "lucide-react";
-import { useDeferredValue, useEffect, useState } from "react";
+import { DicesIcon } from "lucide-react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 const MAX_SEQUENCE_LENGTH = 1000;
 
 export default function Home() {
@@ -37,8 +38,8 @@ export default function Home() {
   const sequenceNumberSelector = (
     <div className="space-y-2">
       <Select onValueChange={(value) => setNumSequences(parseInt(value))}>
-        <SelectTrigger className="w-[180px]" id="numSequences">
-          <SelectValue placeholder="Number of sequences" />
+        <SelectTrigger className="w-fit" id="numSequences">
+          <SelectValue placeholder="Number of sequences" className="" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="1">One Sequence</SelectItem>
@@ -51,9 +52,16 @@ export default function Home() {
 
   return (
     <div className="mx-auto h-full w-full max-w-6xl flex-col space-y-4 p-4">
-      <BaseSelector baseMap={baseMap} setBaseMap={setBaseMap} />
-
+      <section className="flex flex-col items-start gap-1 pb-6 pt-4">
+        <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
+          Sequence Generator
+        </h1>
+        <p className="max-w-2xl text-lg font-light text-foreground">
+          A simple tool to generate random amino acid and nucleotide sequences
+        </p>
+      </section>
       {sequenceNumberSelector}
+      <BaseSelector baseMap={baseMap} setBaseMap={setBaseMap} />
 
       <div className="grid gap-4 md:grid-cols-3">
         <SequenceEditor
@@ -111,7 +119,10 @@ const SequenceEditor = ({
   maxLength: number;
   className?: string;
 }) => {
-  const allowedChars = Object.keys(baseMap).filter((key) => baseMap[key]);
+  const allowedChars = useMemo(
+    () => Object.keys(baseMap).filter((key) => baseMap[key]),
+    [baseMap],
+  );
   useEffect(
     function validateSequence() {
       if (sequence.length > 0) {
@@ -126,6 +137,7 @@ const SequenceEditor = ({
             newSequence.length > 0 &&
             newSequence.length !== sequence.length
           ) {
+            console.log(newSequence.join(""));
             setSequence(newSequence.join(""));
           }
         }
@@ -146,12 +158,6 @@ const SequenceEditor = ({
     },
     [maxLength, seqLength, sequence],
   );
-
-  const randomizeSequence = () => {
-    const chars = sequence.split("");
-    shuffle(chars);
-    setSequence(chars.join(""));
-  };
 
   useEffect(
     function createSequence() {
@@ -196,14 +202,16 @@ const SequenceEditor = ({
         />
       </div>
       <span className="grid gap-2 md:grid-cols-2">
-        <Button onClick={randomizeSequence} variant="secondary">
+        <Button
+          onClick={() =>
+            setSequence(getRandomSequence(seqLength, allowedChars.join("")))
+          }
+          variant="outline"
+        >
           <DicesIcon className="mr-2 h-6 w-6" />
           Randomize
         </Button>
-        <Button onClick={() => navigator.clipboard.writeText(sequence)}>
-          <CopyIcon className="mr-2 h-6 w-6" />
-          Copy
-        </Button>
+        <CopyButton label={"Copy"} textToCopy={() => sequence} />
       </span>
     </div>
   );
@@ -223,9 +231,3 @@ const charClassName = ({ sequenceIdx }: { sequenceIdx: number }) => {
     return "dark:text-amber-300 text-amber-600";
   }
 };
-function shuffle(chars: string[]) {
-  for (let i = chars.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [chars[i], chars[j]] = [chars[j], chars[i]];
-  }
-}
