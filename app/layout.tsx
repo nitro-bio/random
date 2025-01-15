@@ -4,6 +4,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { NitroLogo } from "@/components/NitroLogo";
 import Link from "next/link";
+import { GithubIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Sequences by Nitro Bio",
@@ -46,13 +48,20 @@ export default function RootLayout({
             "dark flex min-h-screen flex-col bg-zinc-900 px-4 py-2 text-white",
           )}
         >
-          <nav className="flex gap-4 border-b border-zinc-800 py-4">
+          <nav className="flex items-center justify-between gap-4 border-b border-zinc-800 py-4">
             <Link
               href="https://nitro.bio/"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <NitroLogo className="h-8 pb-2" />
+              <NitroLogo className="h-6" />
+            </Link>
+
+            <Link href="https://github.com/nitro-bio/random">
+              <Button className="flex items-center gap-2" variant="outline">
+                <span className="hidden sm:inline-block">Feedback</span>
+                <GithubIcon className="h-8 w-8" />
+              </Button>
             </Link>
           </nav>
 

@@ -3,7 +3,7 @@ import { BaseSelector } from "@/components/BaseSelector";
 import { SequenceEditor } from "@/components/SequenceEditor";
 import { useStickyState } from "@/hooks/useStickyState";
 import { cn } from "@/lib/utils";
-import { AMINO_ACIDS, NUCLEOTIDES, PUNCTUATION } from "@/utils/constants";
+import { AMINO_ACIDS, NUCLEOTIDES, PUNCTUATION } from "@/lib/constants";
 import { type AriadneSelection } from "@nitro-bio/sequence-viewers";
 import { LoaderIcon } from "lucide-react";
 import dynamic from "next/dynamic";

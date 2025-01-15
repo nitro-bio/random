@@ -11,7 +11,7 @@ import {
   NUCLEOTIDES,
   Punctuation,
   PUNCTUATION,
-} from "@/utils/constants";
+} from "@/lib/constants";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 
