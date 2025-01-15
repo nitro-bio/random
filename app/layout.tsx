@@ -6,8 +6,30 @@ import { NitroLogo } from "@/components/NitroLogo";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Random Sequence Generator",
-  description: "A random sequence generator by @nitro-bio",
+  title: "Sequences by Nitro Bio",
+  description: "Generate random biological sequences",
+  openGraph: {
+    title: "Sequences by Nitro Bio",
+    description: "Generate random biological sequences",
+    url: "https://random.nitro.bio",
+    siteName: "Sequences by Nitro Bio",
+    images: [
+      {
+        url: "https://opengraph.b-cdn.net/production/images/8ea7e000-f299-464d-b895-fca6c6933c2f.png?token=32O7LqXhkzq1hzBjv3agiVlnUcn2sIW_Mjcy2PkGy5o&height=679&width=1200&expires=33272921171",
+        width: 1200,
+        height: 679,
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sequences by Nitro Bio",
+    description: "Generate random biological sequences",
+    images: [
+      "https://opengraph.b-cdn.net/production/images/8ea7e000-f299-464d-b895-fca6c6933c2f.png?token=32O7LqXhkzq1hzBjv3agiVlnUcn2sIW_Mjcy2PkGy5o&height=679&width=1200&expires=33272921171",
+    ],
+  },
 };
 
 export default function RootLayout({
