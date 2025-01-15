@@ -23,5 +23,5 @@ export const AMINO_ACIDS = [
   "V",
 ] as const;
 export type AminoAcid = (typeof AMINO_ACIDS)[number];
-export const PUNCTUATION = ["-", "*", " ", "."] as const;
+export const PUNCTUATION = ["-", "*", " ", ".", "_"] as const;
 export type Punctuation = (typeof PUNCTUATION)[number];

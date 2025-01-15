@@ -15,9 +15,14 @@ function useStickyState<T>({
   key: string;
   version: string;
 }): [T, React.Dispatch<React.SetStateAction<T>>] {
+  const isRenderingOnServer = typeof window === "undefined";
+
   const internalKey = `${prefix}-${key}-${version}`;
 
   const [value, setValue] = useState(() => {
+    if (isRenderingOnServer) {
+      return defaultValue;
+    }
     const stickyValue = window.localStorage.getItem(internalKey);
     return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
   });

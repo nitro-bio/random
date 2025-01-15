@@ -1,11 +1,28 @@
 "use client";
 import { BaseSelector } from "@/components/BaseSelector";
 import { SequenceEditor } from "@/components/SequenceEditor";
+import { useStickyState } from "@/hooks/useStickyState";
 import { cn } from "@/lib/utils";
 import { AMINO_ACIDS, NUCLEOTIDES, PUNCTUATION } from "@/utils/constants";
-import { useStickyState } from "@/hooks/useStickyState";
-import { AriadneSelection, SequenceViewer } from "@nitro-bio/sequence-viewers";
+import { type AriadneSelection } from "@nitro-bio/sequence-viewers";
+import { LoaderIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useDeferredValue, useState } from "react";
+
+const SequenceViewer = dynamic(
+  async () => {
+    const foo = await import("@nitro-bio/sequence-viewers");
+    return foo.SequenceViewer;
+  },
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex min-h-32 items-center justify-around">
+        <LoaderIcon className="h-8 w-8 animate-spin" />
+      </div>
+    ),
+  },
+);
 
 export default function Home() {
   const [sequence, setSequence] = useStickyState({
@@ -34,7 +51,7 @@ export default function Home() {
 
   const charClassName = ({ base }: { base: { base: string } }) => {
     const classNames = [
-      "hover:bg-zinc-800/80 hover:border-[0.25px] hover:border-zinc-400",
+      "hover:bg-zinc-800/80 hover:outline hover:outline-[0.25px] hover:outline-zinc-400",
       "hover:scale-[200%]",
     ];
     if (!allowedBases.includes(base.base)) {
