@@ -98,7 +98,7 @@ export default function Home() {
           selection={selection}
           setSelection={setSelection}
           charClassName={charClassName}
-          selectionClassName="relative after:bg-zinc-400/20 after:absolute after:-left-px after:right-0 after:inset-y-0 after:z-[-1]"
+          selectionClassName="relative after:bg-blue-400/30 after:absolute after:-left-px after:right-0 after:inset-y-0 after:z-[-1]"
           containerClassName="max-h-[600px] overflow-y-auto col-span-2 row-span-2"
         />
       </section>
@@ -225,10 +225,10 @@ const getRandomSequence = (length: number, chars: string) => {
 
 const charClassName = ({ sequenceIdx }: { sequenceIdx: number }) => {
   if (sequenceIdx === 0) {
-    return "dark:text-brand-300 text-brand-600";
+    return "dark:text-zinc-100 text-zinc-900";
   } else if (sequenceIdx === 1) {
-    return "dark:text-indigo-300 text-indigo-600";
+    return "dark:text-emerald-200 text-emerald-600";
   } else {
-    return "dark:text-amber-300 text-amber-600";
+    return "dark:text-fuchsia-200 text-fuchsia-600";
   }
 };
