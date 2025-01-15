@@ -18,6 +18,7 @@ import { useEffect, useMemo } from "react";
 
 import { useForm } from "react-hook-form";
 import { useStickyState } from "@/hooks/useStickyState";
+import { track } from "@vercel/analytics";
 
 export const SequenceEditor = ({
   baseMap,
@@ -148,6 +149,8 @@ export const SequenceEditor = ({
               label={"  Copy "}
               buttonClassName="w-fit ml-auto whitespace-pre font-mono justify-end"
               textToCopy={() => {
+                track(`copied-random-sequence-${outputMode}`);
+
                 if (outputMode === "text") {
                   return getValues("Sequence");
                 } else if (outputMode === "fasta") {
