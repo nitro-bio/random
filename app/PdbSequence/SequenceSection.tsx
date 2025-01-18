@@ -43,7 +43,7 @@ export const SequenceSection = memo(
         "hover:scale-[200%]",
       ];
       if (!allowedBases.includes(base.base)) {
-        classNames.push("text-red-400 underline");
+        classNames.push("text-rose-400 underline");
       } else {
         classNames.push("text-zinc-100");
       }

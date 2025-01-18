@@ -12,15 +12,12 @@ export default function Home() {
           Sequence Generator
         </h1>
         <p className="max-w-2xl text-lg font-light text-foreground">
-          A simple tool to generate random amino acid and nucleotide sequences
+          A simple tool to generate AA/DNA sequence for testing
         </p>
       </section>
       <Tabs defaultValue="pdb">
         <TabsList className="">
-          <TabsTrigger value="random" className="flex items-center gap-2">
-            <DicesIcon className="h-4 w-4" />
-            Random
-          </TabsTrigger>
+          {" "}
           <TabsTrigger value="pdb" className="flex items-center gap-1">
             <Image
               src="/icons/protein.svg"
@@ -31,12 +28,17 @@ export default function Home() {
             />
             From PDB
           </TabsTrigger>
+          <TabsTrigger value="random" className="flex items-center gap-2">
+            <DicesIcon className="h-4 w-4" />
+            Random
+          </TabsTrigger>
         </TabsList>
-        <TabsContent value="random">
-          <RandomSequence className="w-full" />
-        </TabsContent>
+
         <TabsContent value="pdb" className="pt-4">
           <PdbSequence />
+        </TabsContent>
+        <TabsContent value="random">
+          <RandomSequence className="w-full" />
         </TabsContent>
       </Tabs>
     </div>

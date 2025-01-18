@@ -9,12 +9,13 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { cn } from "@/lib/utils";
 import { AriadneSelection } from "@nitro-bio/sequence-viewers";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowDownFromLineIcon, RotateCcwIcon } from "lucide-react";
+import { ArrowDownFromLineIcon, Copy, RotateCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import MoleculeSection from "./MoleculeSection";
 import SequenceSection from "./SequenceSection";
 import { getPDBString, INITIAL_PDB_ID, pdbToSequence } from "./utils";
+import { CopyButton } from "@/components/ui/copy-button";
 
 type FormValues = {
   pdbId: string;
@@ -239,7 +240,7 @@ const SequenceEditSection = ({
               "ml-auto flex items-center gap-2",
               "text-xs",
               showReset ? "opacity-100" : "opacity-0",
-              "text-red-400",
+              "text-rose-400",
               "transition-all duration-200",
             )}
           >
@@ -263,14 +264,30 @@ const SequenceEditSection = ({
           </span>
         </Label>{" "}
         {InputChildren}
+        <CopyButton
+          label={"Copy Sequence"}
+          textToCopy={() => {
+            return sequence;
+          }}
+          buttonClassName=""
+        />
       </div>
-      <SequenceSection
-        sequence={sequence.toUpperCase()}
-        selection={selection}
-        setSelection={setSelection}
-        className="col-span-2 row-span-2 -mt-4"
-        storageKey={"from-pdb"}
-      />
+
+      <div className="col-span-2 row-span-2 -mt-4">
+        <CopyButton
+          label={"Copy Sequence"}
+          textToCopy={() => {
+            return sequence;
+          }}
+          buttonClassName="ml-auto"
+        />
+        <SequenceSection
+          sequence={sequence.toUpperCase()}
+          selection={selection}
+          setSelection={setSelection}
+          storageKey={"from-pdb"}
+        />
+      </div>
     </>
   );
 };
@@ -327,20 +344,40 @@ const MaskEditSection = ({
     <>
       <div className="flex flex-col gap-4">
         {InputChildren}
-        <span className="row-start-2 flex items-center justify-end gap-2">
-          <Button variant="outline" onClick={() => setMaskApply(!maskApply)}>
-            {maskApply ? "Clear" : "Apply"}
+        <span className="flex justify-end gap-2">
+          <CopyButton
+            label={"Copy Sequence"}
+            textToCopy={() => {
+              return maskApply ? maskedSequence : sequence;
+            }}
+            buttonClassName="w-full"
+          />{" "}
+          <Button
+            variant="outline"
+            onClick={() => setMaskApply(!maskApply)}
+            disabled={!selection}
+            className="border-rose-600/20 bg-rose-800/10"
+          >
+            {maskApply ? "Clear" : "Mask"}
           </Button>
         </span>
       </div>
-      <SequenceSection
-        sequence={maskApply ? maskedSequence : sequence}
-        selection={selection ?? null}
-        selectionClassName="relative after:bg-rose-900/60 after:absolute after:-left-px after:right-0 after:inset-y-0 after:z-[-1] text-zinc-100"
-        setSelection={setSelectionAndMask}
-        className="col-span-2 row-span-2 -mt-6"
-        storageKey={"mask"}
-      />
+      <div className="col-span-2 row-span-2 -mt-6">
+        <CopyButton
+          label={"Copy Sequence"}
+          textToCopy={() => {
+            return maskApply ? maskedSequence : sequence;
+          }}
+          buttonClassName="ml-auto"
+        />
+        <SequenceSection
+          sequence={maskApply ? maskedSequence : sequence}
+          selection={selection ?? null}
+          selectionClassName="relative after:bg-rose-900/60 after:absolute after:-left-px after:right-0 after:inset-y-0 after:z-[-1] text-zinc-100"
+          setSelection={setSelectionAndMask}
+          storageKey={"mask"}
+        />
+      </div>
     </>
   );
 };

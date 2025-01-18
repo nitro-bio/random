@@ -108,7 +108,7 @@ const MoleculeSection = memo(
       <div
         className={cn(
           className,
-          "flex h-80 items-center justify-center text-red-400",
+          "flex h-80 items-center justify-center text-rose-400",
         )}
       >
         {children}
@@ -117,7 +117,7 @@ const MoleculeSection = memo(
     if (error) {
       return (
         <Wrapper>
-          <XIcon className="h-4 w-4 text-red-400" />
+          <XIcon className="h-4 w-4 text-rose-400" />
           <span className="ml-2">Failed to fetch PDB</span>
         </Wrapper>
       );

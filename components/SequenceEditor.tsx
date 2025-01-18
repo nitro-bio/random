@@ -127,7 +127,7 @@ export const SequenceEditor = ({
               setSequenceLength(filtered.length);
             }}
             variant="outline"
-            className="border-red-600/20 bg-red-800/10"
+            className="border-rose-600/20 bg-rose-800/10"
           >
             <FilterIcon className="mr-2 h-6 w-6" />
             Filter
