@@ -5,6 +5,7 @@ import { AriadneSelection } from "@nitro-bio/sequence-viewers";
 import { Loader2Icon, XIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { memo, useMemo } from "react";
+import { pdbToSequence } from "./utils";
 const MoleculeViewer = dynamic(
   async () => {
     const m = await import("@nitro-bio/molstar-easy");
@@ -25,6 +26,7 @@ const MoleculeSection = memo(
     error,
     isFetching,
     selection,
+    mask,
     className,
   }: {
     pdbString?: string | null;
@@ -32,37 +34,59 @@ const MoleculeSection = memo(
     isFetching?: boolean;
     selection: AriadneSelection | null;
     className?: string;
+    mask: [number, number] | null;
   }) => {
     const debouncedSelection = useDebounce<AriadneSelection | null>({
       value: selection,
       delay: 500,
     });
+    const debouncedMask = useDebounce<[number, number] | null>({
+      value: mask,
+      delay: 500,
+    });
 
-    const selectionHighlights = useMemo(() => {
-      if (!debouncedSelection) return [];
-      const { start, end } = debouncedSelection;
-      // TODO: handle selection over seam
-      return [
-        {
-          start,
-          end,
-          label: {
-            text: "⠀", // hides label
-            hexColor: "#0ea5e9", // sky-500
-          },
-        },
-      ];
-    }, [debouncedSelection]);
+    const memoizedMoleculeViewer = useMemo(() => {
+      const sequenceLength = pdbToSequence(pdbString ?? "").length;
 
-    const moleculePayloads = useMemo(() => {
-      return [
+      const selectionHighlights = debouncedSelection
+        ? createHighlights({
+            start: debouncedSelection.start,
+            end: debouncedSelection.end,
+            sequenceLength,
+            label: {
+              text: "⠀", // hides label
+              hexColor: "#0ea5e9", // sky-500
+            },
+          })
+        : [];
+      const maskHighlights = debouncedMask
+        ? createHighlights({
+            start: debouncedMask[0],
+            end: debouncedMask[1],
+            sequenceLength,
+            label: {
+              text: "⠀", // hides label
+              hexColor: "#3f3f46", // zinc-700
+            },
+          })
+        : [];
+
+      const moleculePayloads = [
         {
           pdbString: pdbString ?? "",
-          highlights: selectionHighlights,
+          highlights: [...selectionHighlights, ...maskHighlights],
           structureHexColor: "#f4f4f5", // zinc-100
         },
       ];
-    }, [pdbString, selectionHighlights]);
+      return (
+        <MoleculeViewer
+          moleculePayloads={moleculePayloads}
+          // bg-zinc-900
+          backgroundHexColor="#18181b"
+          className="h-80"
+        />
+      );
+    }, [debouncedSelection, pdbString, debouncedMask]);
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <div
@@ -96,17 +120,44 @@ const MoleculeSection = memo(
         </Wrapper>
       );
     }
-    return (
-      <Wrapper>
-        <MoleculeViewer
-          moleculePayloads={moleculePayloads}
-          // bg-zinc-900
-          backgroundHexColor="#18181b"
-          className="h-80"
-        />
-      </Wrapper>
-    );
+    return <Wrapper>{memoizedMoleculeViewer}</Wrapper>;
   },
 );
 MoleculeSection.displayName = "MoleculeSection";
 export default MoleculeSection;
+
+const createHighlights = ({
+  start,
+  end,
+  sequenceLength,
+  label,
+}: {
+  start: number;
+  end: number;
+  sequenceLength: number;
+  label: {
+    text: string;
+    hexColor: string;
+  };
+}) => {
+  const highlights = [];
+  if (start > end) {
+    highlights.push({
+      start: 0,
+      end,
+      label,
+    });
+    highlights.push({
+      start,
+      end: sequenceLength,
+      label,
+    });
+  } else {
+    highlights.push({
+      start,
+      end,
+      label,
+    });
+  }
+  return highlights;
+};

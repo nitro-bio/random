@@ -88,6 +88,7 @@ export const PDBEditor = () => {
           setSequenceFromPdb(seq);
           setSequence(seq);
         }}
+        mask={maskApply ? mask : null}
       />
       {sequenceFromPdb && (
         <>
@@ -106,10 +107,6 @@ export const PDBEditor = () => {
             selection={selection}
             setSelection={(value) => {
               setSelection(value);
-              if (value) {
-                setValue("maskStart", value.start);
-                setValue("maskEnd", value.end);
-              }
             }}
           />
           <Separator className="col-span-3 my-8" />
@@ -171,11 +168,13 @@ export const PDBEditor = () => {
 
 const PDBSection = ({
   InputChildren,
+  mask,
   pdbId,
   selection,
   setSequence,
 }: {
   InputChildren: React.ReactNode;
+  mask: [number, number] | null;
   pdbId: string;
   selection: AriadneSelection | null;
   setSequence: (value: string) => void;
@@ -207,6 +206,7 @@ const PDBSection = ({
           selection={selection}
           isFetching={isFetching}
           error={error as Error}
+          mask={mask}
         />
       </div>
     </>
