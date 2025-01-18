@@ -60,7 +60,7 @@ const MoleculeSection = memo(
           })
         : [];
 
-      const getIndexToColor = (mask: [number, number] | null) => {
+      const indexToColor = (() => {
         const maskHighlights = debouncedMask
           ? createHighlights({
               start: debouncedMask[0],
@@ -79,18 +79,18 @@ const MoleculeSection = memo(
             maskHighlights.some(
               (highlight) => i >= highlight.start && i < highlight.end,
             )
-              ? "#3f3f46" // zinc-700 if in mask
+              ? "#500724" // zinc-700 if in mask
               : "#f4f4f5", // zinc-100 if not in mask
           ]),
         );
         return res;
-      };
+      })();
 
       const moleculePayloads = [
         {
           pdbString: pdbString ?? "",
           highlights: selectionHighlights,
-          indexToColor: getIndexToColor(debouncedMask),
+          indexToColor,
           structureHexColor: "#f4f4f5", // zinc-100
         },
       ];

@@ -308,8 +308,8 @@ const MaskEditSection = ({
     }
     return (
       sequence.slice(0, start) +
-      maskChar.repeat(end - start) +
-      sequence.slice(end)
+      maskChar.repeat(end + 1 - start) +
+      sequence.slice(end + 1)
     );
   };
   const maskedSequence = maskSequence(sequence, mask, maskChar);
@@ -336,9 +336,9 @@ const MaskEditSection = ({
       <SequenceSection
         sequence={maskApply ? maskedSequence : sequence}
         selection={selection ?? null}
-        selectionClassName="relative after:bg-zinc-500/60 after:absolute after:-left-px after:right-0 after:inset-y-0 after:z-[-1] text-zinc-100"
+        selectionClassName="relative after:bg-rose-900/60 after:absolute after:-left-px after:right-0 after:inset-y-0 after:z-[-1] text-zinc-100"
         setSelection={setSelectionAndMask}
-        className="col-span-2 row-span-2 -mt-4"
+        className="col-span-2 row-span-2 -mt-6"
         storageKey={"mask"}
       />
     </>
