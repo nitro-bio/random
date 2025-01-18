@@ -1,28 +1,14 @@
 "use client";
-import { useDeferredValue, useState } from "react";
 import { BaseSelector } from "@/components/BaseSelector";
 import { SequenceEditor } from "@/components/SequenceEditor";
 import { useStickyState } from "@/hooks/useStickyState";
-import { cn } from "@/lib/utils";
 import { AMINO_ACIDS, NUCLEOTIDES, PUNCTUATION } from "@/lib/constants";
-import { type AriadneSelection } from "@nitro-bio/sequence-viewers";
-import dynamic from "next/dynamic";
-import { LoaderIcon } from "lucide-react";
-
-const SequenceViewer = dynamic(
-  async () => {
-    const foo = await import("@nitro-bio/sequence-viewers");
-    return foo.SequenceViewer;
-  },
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex min-h-32 items-center justify-around">
-        <LoaderIcon className="h-8 w-8 animate-spin" />
-      </div>
-    ),
-  },
-);
+import { cn } from "@/lib/utils";
+import {
+  SequenceViewer,
+  type AriadneSelection,
+} from "@nitro-bio/sequence-viewers";
+import { useDeferredValue, useState } from "react";
 
 export const RandomSequence = ({ className }: { className?: string }) => {
   const [sequence, setSequence] = useStickyState({
@@ -46,7 +32,6 @@ export const RandomSequence = ({ className }: { className?: string }) => {
     key: "baseMap",
     version: "0",
   });
-
   const allowedBases = Object.keys(baseMap).filter((key) => baseMap[key]);
 
   const charClassName = ({ base }: { base: { base: string } }) => {

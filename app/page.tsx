@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import Image from "next/image";
 import { DicesIcon } from "lucide-react";
 import PdbSequence from "./PdbSequence/PdbSequence";
 import { RandomSequence } from "./RandomSequence/RandomSequence";
@@ -15,18 +15,27 @@ export default function Home() {
           A simple tool to generate random amino acid and nucleotide sequences
         </p>
       </section>
-      <Tabs defaultValue="random">
+      <Tabs defaultValue="pdb">
         <TabsList className="">
           <TabsTrigger value="random" className="flex items-center gap-2">
             <DicesIcon className="h-4 w-4" />
             Random
           </TabsTrigger>
-          <TabsTrigger value="pdb">From PDB</TabsTrigger>
+          <TabsTrigger value="pdb" className="flex items-center gap-1">
+            <Image
+              src="/icons/protein.svg"
+              alt="Protein Icon"
+              width={24}
+              height={24}
+              className="invert"
+            />
+            From PDB
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="random">
           <RandomSequence className="w-full" />
         </TabsContent>
-        <TabsContent value="pdb">
+        <TabsContent value="pdb" className="pt-4">
           <PdbSequence />
         </TabsContent>
       </Tabs>
