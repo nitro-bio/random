@@ -59,7 +59,7 @@ const MoleculeSection = memo(
         {
           pdbString: pdbString ?? "",
           highlights: selectionHighlights,
-	  structureHexColor: "#f4f4f5", // zinc-100
+          structureHexColor: "#f4f4f5", // zinc-100
         },
       ];
     }, [pdbString, selectionHighlights]);
@@ -102,7 +102,6 @@ const MoleculeSection = memo(
           moleculePayloads={moleculePayloads}
           // bg-zinc-900
           backgroundHexColor="#18181b"
-
           className="h-80"
         />
       </Wrapper>

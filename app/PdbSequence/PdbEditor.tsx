@@ -6,16 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useStickyState } from "@/hooks/useStickyState";
 import { cn } from "@/lib/utils";
 import { AriadneSelection } from "@nitro-bio/sequence-viewers";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDownFromLineIcon, RotateCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { getPDBString, INITIAL_PDB_ID, pdbToSequence } from "./utils";
 import MoleculeSection from "./MoleculeSection";
 import SequenceSection from "./SequenceSection";
+import { getPDBString, INITIAL_PDB_ID, pdbToSequence } from "./utils";
 
 type FormValues = {
   pdbId: string;
@@ -116,22 +115,10 @@ export const PDBEditor = () => {
           <Separator className="col-span-3 my-8" />
           <MaskEditSection
             InputChildren={
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4">
                 <Label
                   htmlFor="maskStart"
-                  className="flex w-fit flex-col gap-2"
-                >
-                  Char
-                  <Input
-                    type="text"
-                    placeholder="Char"
-                    {...register("maskChar")}
-                    maxLength={1}
-                  />
-                </Label>
-                <Label
-                  htmlFor="maskStart"
-                  className="flex w-fit flex-col gap-2"
+                  className="flex w-fit min-w-24 flex-col gap-2"
                 >
                   Start
                   <Input
@@ -150,9 +137,21 @@ export const PDBEditor = () => {
                   <Input
                     type="number"
                     placeholder="End"
+                    className="min-w-24"
                     {...register("maskEnd")}
                     min={maskStart ?? 0}
                     max={sequence.length}
+                  />
+                </Label>
+                <Label
+                  htmlFor="maskStart"
+                  className="flex flex-1 flex-col gap-2"
+                >
+                  Mask
+                  <Input
+                    type="text"
+                    placeholder="Char"
+                    {...register("maskChar")}
                   />
                 </Label>
               </div>
@@ -162,8 +161,6 @@ export const PDBEditor = () => {
             setMask={setMask}
             maskApply={maskApply}
             setMaskApply={setMaskApply}
-            selection={selection}
-            setSelection={setSelection}
             maskChar={maskChar}
           />
         </>
@@ -272,6 +269,7 @@ const SequenceEditSection = ({
         selection={selection}
         setSelection={setSelection}
         className="col-span-2 row-span-2 -mt-4"
+        storageKey={"from-pdb"}
       />
     </>
   );
@@ -301,6 +299,13 @@ const MaskEditSection = ({
   ) => {
     if (!mask) return sequence;
     const [start, end] = mask;
+    if (start > end) {
+      // handle selection over seam
+      const maskToEnd = sequence.slice(start).replace(/\S/g, maskChar);
+      const startToMask = sequence.slice(0, end + 1).replace(/\S/g, maskChar);
+      const remainder = sequence.slice(end, start);
+      return startToMask + remainder + maskToEnd;
+    }
     return (
       sequence.slice(0, start) +
       maskChar.repeat(end - start) +
@@ -311,10 +316,9 @@ const MaskEditSection = ({
   const selection = mask && {
     start: mask[0],
     end: mask[1],
-    direction: "forward",
+    direction: "forward" as const,
   };
   const setSelectionAndMask = (value: AriadneSelection | null) => {
-    setSelection(value);
     if (value) {
       setMask([value.start, value.end]);
     }
@@ -335,6 +339,7 @@ const MaskEditSection = ({
         selectionClassName="relative after:bg-zinc-500/60 after:absolute after:-left-px after:right-0 after:inset-y-0 after:z-[-1] text-zinc-100"
         setSelection={setSelectionAndMask}
         className="col-span-2 row-span-2 -mt-4"
+        storageKey={"mask"}
       />
     </>
   );

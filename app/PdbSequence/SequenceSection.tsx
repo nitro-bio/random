@@ -12,8 +12,10 @@ export const SequenceSection = memo(
     selection,
     selectionClassName,
     setSelection,
+    storageKey,
     className,
   }: {
+    storageKey: string;
     sequence?: string;
     selection: AriadneSelection | null;
     setSelection: (selection: AriadneSelection | null) => void;
@@ -29,8 +31,8 @@ export const SequenceSection = memo(
           AMINO_ACIDS.map((a) => [a, true]),
         ].flat(),
       ),
-      prefix: "nitro-pdb",
-      key: "baseMap",
+      prefix: "nitro-pdb-basemap",
+      key: storageKey,
       version: "0",
     });
     const allowedBases = Object.keys(baseMap).filter((key) => baseMap[key]);
