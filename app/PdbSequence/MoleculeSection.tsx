@@ -59,22 +59,38 @@ const MoleculeSection = memo(
             },
           })
         : [];
-      const maskHighlights = debouncedMask
-        ? createHighlights({
-            start: debouncedMask[0],
-            end: debouncedMask[1],
-            sequenceLength,
-            label: {
-              text: "⠀", // hides label
-              hexColor: "#3f3f46", // zinc-700
-            },
-          })
-        : [];
+
+      const getIndexToColor = (mask: [number, number] | null) => {
+        const maskHighlights = debouncedMask
+          ? createHighlights({
+              start: debouncedMask[0],
+              end: debouncedMask[1],
+              sequenceLength,
+              label: {
+                text: "⠀", // hides label
+                hexColor: "#3f3f46", // zinc-700
+              },
+            })
+          : [];
+        const res = new Map(
+          Array.from({ length: sequenceLength }, (_, i) => i).map((i) => [
+            // if index in any of the highlights, return the color
+            i,
+            maskHighlights.some(
+              (highlight) => i >= highlight.start && i < highlight.end,
+            )
+              ? "#3f3f46" // zinc-700 if in mask
+              : "#f4f4f5", // zinc-100 if not in mask
+          ]),
+        );
+        return res;
+      };
 
       const moleculePayloads = [
         {
           pdbString: pdbString ?? "",
-          highlights: [...selectionHighlights, ...maskHighlights],
+          highlights: selectionHighlights,
+          indexToColor: getIndexToColor(debouncedMask),
           structureHexColor: "#f4f4f5", // zinc-100
         },
       ];
