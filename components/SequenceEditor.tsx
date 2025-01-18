@@ -56,7 +56,6 @@ export const SequenceEditor = ({
     value: watchedSequence,
     delay: 50,
   });
-  console.log("here", debouncedSequence, watchedSequence);
   useEffect(() => {
     if (debouncedSequence) {
       pushSequence(debouncedSequence.toUpperCase());

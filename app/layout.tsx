@@ -6,6 +6,7 @@ import { NitroLogo } from "@/components/NitroLogo";
 import Link from "next/link";
 import { GithubIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Providers from "@/app/providers";
 
 export const metadata: Metadata = {
   title: "Sequences by Nitro Bio",
@@ -64,8 +65,7 @@ export default function RootLayout({
               </Button>
             </Link>
           </nav>
-
-          {children}
+          <Providers>{children}</Providers>
           <Analytics />
         </main>
       </body>
