@@ -2,6 +2,7 @@
 import { Separator } from "@/components/ui/separator";
 
 import { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,13 +10,12 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { cn } from "@/lib/utils";
 import { AriadneSelection } from "@nitro-bio/sequence-viewers";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowDownFromLineIcon, Copy, RotateCcwIcon } from "lucide-react";
+import { ArrowDownFromLineIcon, RotateCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import MoleculeSection from "./MoleculeSection";
 import SequenceSection from "./SequenceSection";
 import { getPDBString, INITIAL_PDB_ID, pdbToSequence } from "./utils";
-import { CopyButton } from "@/components/ui/copy-button";
 
 type FormValues = {
   pdbId: string;
@@ -41,7 +41,7 @@ export const PDBEditor = () => {
   const pdbId = watch("pdbId");
   const [selection, setSelection] = useState<AriadneSelection | null>(null);
 
-  const sequence = watch("sequence");
+  const sequence = watch("sequence").toUpperCase();
   const setSequence = (value: string) =>
     setValue("sequence", value.toUpperCase());
   const [sequenceFromPdb, setSequenceFromPdb] = useState<string | null>(null);
@@ -315,7 +315,7 @@ const MaskEditSection = ({
     maskChar: string,
   ) => {
     if (!mask) return sequence;
-    const [start, end] = mask;
+    let [start, end] = mask;
     if (start > end) {
       // handle selection over seam
       const maskToEnd = sequence.slice(start).replace(/\S/g, maskChar);
@@ -323,6 +323,8 @@ const MaskEditSection = ({
       const remainder = sequence.slice(end, start);
       return startToMask + remainder + maskToEnd;
     }
+    [start, end] = [Math.max(0, start), Math.min(end, sequence.length)];
+    console.log(start, end);
     return (
       sequence.slice(0, start) +
       maskChar.repeat(end + 1 - start) +
