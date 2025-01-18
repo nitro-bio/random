@@ -46,10 +46,11 @@ export default function RootLayout({
         <main
           className={cn(
             `antialiased`,
-            "dark flex min-h-screen flex-col bg-zinc-900 px-4 py-2 text-white",
+            "dark flex min-h-screen flex-col bg-zinc-900 px-1 py-2 text-white",
+            "overflow-hidden",
           )}
         >
-          <nav className="flex items-center justify-between gap-4 border-b border-zinc-800 py-4">
+          <nav className="flex items-center gap-4 border-b border-zinc-800 px-4 py-4">
             <Link
               href="https://nitro.bio/"
               target="_blank"
