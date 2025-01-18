@@ -56,7 +56,6 @@ export const SequenceEditor = ({
     value: watchedSequence,
     delay: 50,
   });
-  console.log("here", debouncedSequence, watchedSequence);
   useEffect(() => {
     if (debouncedSequence) {
       pushSequence(debouncedSequence.toUpperCase());
@@ -81,7 +80,7 @@ export const SequenceEditor = ({
 
   return (
     <section className={cn("flex flex-col gap-4", className)}>
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="sequenceLength">Sequence Length</Label>
         <Input
           className="w-fit min-w-[180px]"
@@ -128,7 +127,7 @@ export const SequenceEditor = ({
               setSequenceLength(filtered.length);
             }}
             variant="outline"
-            className="border-red-600/20 bg-red-800/10"
+            className="border-rose-600/20 bg-rose-800/10"
           >
             <FilterIcon className="mr-2 h-6 w-6" />
             Filter

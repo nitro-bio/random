@@ -6,6 +6,7 @@ import { NitroLogo } from "@/components/NitroLogo";
 import Link from "next/link";
 import { GithubIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Providers from "@/app/providers";
 
 export const metadata: Metadata = {
   title: "Sequences by Nitro Bio",
@@ -45,10 +46,11 @@ export default function RootLayout({
         <main
           className={cn(
             `antialiased`,
-            "dark flex min-h-screen flex-col bg-zinc-900 px-4 py-2 text-white",
+            "dark flex min-h-screen flex-col bg-zinc-900 px-1 py-2 text-white",
+            "overflow-hidden",
           )}
         >
-          <nav className="flex items-center justify-between gap-4 border-b border-zinc-800 py-4">
+          <nav className="flex items-center gap-4 border-b border-zinc-800 px-4 py-4">
             <Link
               href="https://nitro.bio/"
               target="_blank"
@@ -64,8 +66,7 @@ export default function RootLayout({
               </Button>
             </Link>
           </nav>
-
-          {children}
+          <Providers>{children}</Providers>
           <Analytics />
         </main>
       </body>

@@ -14,20 +14,25 @@ import {
 } from "@/lib/constants";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
+import { cn } from "@/lib/utils";
 
 export const BaseSelector = ({
   baseMap,
   setBaseMap,
+  className,
 }: {
   baseMap: Record<string, boolean>;
   setBaseMap: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  className?: string;
 }) => {
   const allowedBases = Object.keys(baseMap).filter((base) => baseMap[base]);
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
-        <AccordionTrigger className="flex max-w-full justify-start gap-2">
-          <span className="w-full flex-1 text-start">Allowed Bases</span>
+        <AccordionTrigger
+          className={cn("flex max-w-full justify-start gap-2", className)}
+        >
+          <Label className="w-full flex-1 text-start">Allowed Bases</Label>
           <span className="flex-1 truncate text-zinc-400">
             {allowedBases.join(", ")}
           </span>
