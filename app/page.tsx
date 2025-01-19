@@ -6,15 +6,7 @@ import { RandomSequence } from "./RandomSequence/RandomSequence";
 
 export default function Home() {
   return (
-    <div className="mx-auto h-full w-full max-w-6xl flex-col space-y-4 p-4">
-      <section className="flex flex-col items-start gap-1 pb-6 pt-4">
-        <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
-          Sequence Generator
-        </h1>
-        <p className="max-w-2xl text-lg font-light text-foreground">
-          A simple tool to generate AA/DNA sequence for testing
-        </p>
-      </section>
+    <div>
       <Tabs defaultValue="pdb">
         <TabsList className="">
           {" "}

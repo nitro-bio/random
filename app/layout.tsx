@@ -42,33 +42,43 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <main
-          className={cn(
-            `antialiased`,
-            "dark flex min-h-screen flex-col bg-zinc-900 px-1 py-2 text-white",
-            "overflow-hidden",
-          )}
-        >
-          <nav className="flex items-center gap-4 border-b border-zinc-800 px-4 py-4">
-            <Link
-              href="https://nitro.bio/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <NitroLogo className="h-6" />
-            </Link>
+      <body
+        className={cn(
+          `antialiased`,
+          "dark flex min-h-screen flex-col bg-zinc-900 px-1 py-2 text-white",
+          "overflow-hidden",
+        )}
+      >
+        <nav className="flex items-center gap-4 border-b border-zinc-800 px-4 py-4">
+          <Link
+            href="https://nitro.bio/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <NitroLogo className="h-6" />
+          </Link>
 
-            <Link href="https://github.com/nitro-bio/random">
-              <Button className="flex items-center gap-2" variant="outline">
-                <span className="hidden sm:inline-block">Feedback</span>
-                <GithubIcon className="h-8 w-8" />
-              </Button>
-            </Link>
-          </nav>
-          <Providers>{children}</Providers>
-          <Analytics />
-        </main>
+          <Link href="https://github.com/nitro-bio/random">
+            <Button className="flex items-center gap-2" variant="outline">
+              <span className="hidden sm:inline-block">Feedback</span>
+              <GithubIcon className="h-8 w-8" />
+            </Button>
+          </Link>
+        </nav>
+        <Providers>
+          <main className="mx-auto h-full w-full max-w-6xl p-4">
+            <section className="flex flex-col items-start gap-1 pb-6 pt-4">
+              <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
+                Sequence Generator
+              </h1>
+              <p className="max-w-2xl text-lg font-light text-foreground">
+                A simple tool to generate AA/DNA sequence for testing
+              </p>
+            </section>
+            {children}
+          </main>
+        </Providers>
+        <Analytics />
       </body>
     </html>
   );
