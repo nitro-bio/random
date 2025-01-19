@@ -1,12 +1,12 @@
-import { Analytics } from "@vercel/analytics/react";
-import type { Metadata } from "next";
-import "./globals.css";
-import { cn } from "@/lib/utils";
-import { NitroLogo } from "@/components/NitroLogo";
-import Link from "next/link";
-import { GithubIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Providers from "@/app/providers";
+import { NitroLogo } from "@/components/NitroLogo";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/react";
+import { GithubIcon } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Sequences by Nitro Bio",

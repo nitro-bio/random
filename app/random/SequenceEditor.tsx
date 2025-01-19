@@ -1,42 +1,137 @@
 "use client";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
+import { BaseSelector } from "@/components/BaseSelector";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
-import { DicesIcon, FilterIcon } from "lucide-react";
-import { useEffect, useMemo } from "react";
-
-import { useForm } from "react-hook-form";
 import { useStickyState } from "@/hooks/useStickyState";
+import { AMINO_ACIDS, NUCLEOTIDES, PUNCTUATION } from "@/lib/constants";
+import { cn, createQueryString } from "@/lib/utils";
+import {
+  SequenceViewer,
+  type AriadneSelection,
+} from "@nitro-bio/sequence-viewers";
+import { DicesIcon, FilterIcon } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { track } from "@vercel/analytics";
+import { useForm } from "react-hook-form";
+
+export const RandomSequenceSection = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [sequence, setSequence] = useState(
+    searchParams.get("initialSequence") ?? "ATGCATGCATGCATGCATGCATGCATGCATGC",
+  );
+  const debouncedSequence = useDebounce({
+    value: sequence,
+    delay: 500,
+  });
+  useEffect(
+    function setSequenceInSearchParams() {
+      const newParams = createQueryString(
+        "initialSequence",
+        debouncedSequence,
+        searchParams,
+      );
+      router.push(pathname + "?" + newParams);
+    },
+    [debouncedSequence],
+  );
+
+  const [mode, setMode] = useState<"text" | "fasta">(
+    (searchParams.get("mode") as "text" | "fasta") ?? "text",
+  );
+  useEffect(
+    function setModeInSearchParams() {
+      const newParams = createQueryString("mode", mode, searchParams);
+      router.push(pathname + "?" + newParams);
+    },
+    [mode],
+  );
+
+  const [selection, setSelection] = useState<AriadneSelection | null>(null);
+  // initial map where all amino acids are false and all nucleotides are true
+  const [baseMap, setBaseMap] = useStickyState<Record<string, boolean>>({
+    defaultValue: Object.fromEntries(
+      [
+        PUNCTUATION.map((p) => [p, false]),
+        AMINO_ACIDS.map((a) => [a, false]),
+        NUCLEOTIDES.map((n) => [n, true]),
+      ].flat(),
+    ),
+    prefix: "nitro-random",
+    key: "baseMap",
+    version: "0",
+  });
+  const allowedBases = Object.keys(baseMap).filter((key) => baseMap[key]);
+
+  const charClassName = ({ base }: { base: { base: string } }) => {
+    const classNames = [
+      "hover:bg-zinc-800/80 hover:outline hover:outline-[0.25px] hover:outline-zinc-400",
+      "hover:scale-[200%]",
+    ];
+    if (!allowedBases.includes(base.base)) {
+      classNames.push("text-rose-400 underline");
+    } else {
+      classNames.push("text-zinc-100");
+    }
+    return cn(...classNames);
+  };
+
+  return (
+    <section className={cn("flex flex-col gap-4")}>
+      <BaseSelector baseMap={baseMap} setBaseMap={setBaseMap} />
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <SequenceEditor
+          initialSequence={debouncedSequence}
+          pushSequence={setSequence}
+          baseMap={baseMap}
+          outputMode={mode}
+          setOutputMode={setMode}
+        />
+
+        <SequenceViewer
+          sequences={[debouncedSequence]}
+          annotations={[]}
+          selection={selection}
+          setSelection={setSelection}
+          charClassName={charClassName}
+          selectionClassName="relative after:bg-blue-400/30 after:absolute after:-left-px after:right-0 after:inset-y-0 after:z-[-1]"
+          containerClassName="max-h-[600px] overflow-y-auto h-fit"
+        />
+      </div>
+    </section>
+  );
+};
 
 export const SequenceEditor = ({
   baseMap,
   initialSequence,
   pushSequence,
+  outputMode,
+  setOutputMode,
   className,
 }: {
+  outputMode: "text" | "fasta";
+  setOutputMode: (mode: "text" | "fasta") => void;
   baseMap: Record<string, boolean>;
   initialSequence: string;
   pushSequence: (sequence: string) => void;
   className?: string;
 }) => {
-  const [outputMode, setOutputMode] = useStickyState<"text" | "fasta">({
-    defaultValue: "text",
-    prefix: "nitro-random",
-    key: "outputMode",
-    version: "0",
-  });
   const allowedChars = useMemo(
     () => Object.keys(baseMap).filter((key) => baseMap[key]),
     [baseMap],

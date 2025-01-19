@@ -11,8 +11,10 @@ import { cn } from "@/lib/utils";
 import { AriadneSelection } from "@nitro-bio/sequence-viewers";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDownFromLineIcon, RotateCcwIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import MoleculeSection from "./MoleculeSection";
 import SequenceSection from "./SequenceSection";
 import { getPDBString, INITIAL_PDB_ID, pdbToSequence } from "./utils";
@@ -26,17 +28,23 @@ type FormValues = {
   maskApply: boolean;
 };
 
-export const PDBEditor = () => {
+export default function PdbPage() {
+  const searchParams = useSearchParams();
+
+  const defaultValues = {
+    pdbId: searchParams.get("pdbId") ?? INITIAL_PDB_ID,
+    sequence: searchParams.get("sequence") ?? "",
+    maskChar: searchParams.get("maskChar") ?? "-",
+    maskStart: z.number().nullable().parse(searchParams.get("maskStart")),
+    maskEnd: z.number().nullable().parse(searchParams.get("maskEnd")),
+    maskApply: z.boolean().parse(searchParams.get("maskApply") ?? false),
+  };
+  return <PDBEditor defaultValues={defaultValues} />;
+}
+
+const PDBEditor = ({ defaultValues }: { defaultValues: FormValues }) => {
   const { register, setValue, watch } = useForm<FormValues>({
-    defaultValues: {
-      // TODO: grab from URL
-      pdbId: INITIAL_PDB_ID,
-      sequence: "",
-      maskChar: "_",
-      maskStart: null,
-      maskEnd: null,
-      maskApply: false,
-    },
+    defaultValues,
   });
   const pdbId = watch("pdbId");
   const [selection, setSelection] = useState<AriadneSelection | null>(null);
