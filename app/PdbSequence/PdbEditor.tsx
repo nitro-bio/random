@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import MoleculeSection from "./MoleculeSection";
 import SequenceSection from "./SequenceSection";
 import { getPDBString, INITIAL_PDB_ID, pdbToSequence } from "./utils";
+import { track } from "@vercel/analytics";
 
 type FormValues = {
   pdbId: string;
@@ -187,7 +188,16 @@ const PDBSection = ({
     isFetching,
   } = useQuery({
     queryKey: ["pdbString", debouncedPdbId],
-    queryFn: () => getPDBString(debouncedPdbId),
+    queryFn: () => {
+      {
+        if (debouncedPdbId !== INITIAL_PDB_ID) {
+          track("download_pdb", {
+            pdb_id: debouncedPdbId,
+          });
+        }
+        return getPDBString(debouncedPdbId);
+      }
+    },
   });
   const sequenceFromPdb = pdbString && pdbToSequence(pdbString);
   useEffect(
@@ -267,6 +277,9 @@ const SequenceEditSection = ({
         <CopyButton
           label={"Copy Sequence"}
           textToCopy={() => {
+            track("copy_sequence", {
+              button_id: "from_pdb_textarea",
+            });
             return sequence;
           }}
           buttonClassName=""
@@ -277,6 +290,9 @@ const SequenceEditSection = ({
         <CopyButton
           label={"Copy Sequence"}
           textToCopy={() => {
+            track("copy_sequence", {
+              button_id: "from_pdb_seqviewer",
+            });
             return sequence;
           }}
           buttonClassName="ml-auto"
@@ -324,7 +340,6 @@ const MaskEditSection = ({
       return startToMask + remainder + maskToEnd;
     }
     [start, end] = [Math.max(0, start), Math.min(end, sequence.length)];
-    console.log(start, end);
     return (
       sequence.slice(0, start) +
       maskChar.repeat(end + 1 - start) +
@@ -350,6 +365,10 @@ const MaskEditSection = ({
           <CopyButton
             label={"Copy Sequence"}
             textToCopy={() => {
+              track("copy_sequence", {
+                button_id: "from_mask_textarea",
+              });
+
               return maskApply ? maskedSequence : sequence;
             }}
             buttonClassName="w-full"
@@ -368,6 +387,9 @@ const MaskEditSection = ({
         <CopyButton
           label={"Copy Sequence"}
           textToCopy={() => {
+            track("copy_sequence", {
+              button_id: "from_mask_sequence",
+            });
             return maskApply ? maskedSequence : sequence;
           }}
           buttonClassName="ml-auto"
