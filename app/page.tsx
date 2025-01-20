@@ -12,7 +12,7 @@ export default function Home() {
           Sequence Generator
         </h1>
         <p className="max-w-2xl text-lg font-light text-foreground">
-          A simple tool to generate AA/DNA sequence for testing
+          A simple tool to generate AA/DNA sequences for testing
         </p>
       </section>
       <Tabs defaultValue="pdb">
